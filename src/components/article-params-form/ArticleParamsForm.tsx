@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 
 import { ArrowButton } from 'components/arrow-button';
+import { Text } from 'components/text';
 import { Button } from 'components/button';
 
 import styles from './ArticleParamsForm.module.scss';
@@ -27,19 +28,14 @@ export const ArticleParamsForm = ({
 	changeArticle,
 }: TChangeArticleFunction) => {
 	const [isFormOpen, setIsFormOpen] = useState(false);
+	const formRef = useRef<HTMLDivElement>(null);
+
 	const handleToggleForm = () => {
 		setIsFormOpen(!isFormOpen);
 	};
-	//   const defaultFormState = {
-	// 	fontFamilyOption: defaultArticleState.fontFamilyOption,
-	// 	fontSizeOptions: defaultArticleState.fontSizeOption,
-	// 	fontColors: defaultArticleState.fontColor,
-	// 	backgroundColor: defaultArticleState.backgroundColor,
-	// 	contentWidth: defaultArticleState.contentWidth
-	//   }
 
 	const [formState, setFormState] = useState(defaultArticleState);
-	// const [formState, setFormState] = useState(defaultFormState);
+
 	const handleFontFamilyChange = (value: OptionType) => {
 		setFormState({ ...formState, fontFamilyOption: value });
 	};
@@ -47,12 +43,15 @@ export const ArticleParamsForm = ({
 	const handleFontSizeChange = (value: OptionType) => {
 		setFormState({ ...formState, fontSizeOption: value });
 	};
+
 	const handleFontColorChange = (value: OptionType) => {
 		setFormState({ ...formState, fontColor: value });
 	};
+
 	const handleBackgroundColorChange = (value: OptionType) => {
 		setFormState({ ...formState, backgroundColor: value });
 	};
+
 	const handleContentWidthChange = (value: OptionType) => {
 		setFormState({ ...formState, contentWidth: value });
 	};
@@ -66,13 +65,33 @@ export const ArticleParamsForm = ({
 	function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		changeArticle(formState);
+		setIsFormOpen(!isFormOpen);
 	}
+
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (formRef.current && !formRef.current.contains(event.target as Node)) {
+				setIsFormOpen(false);
+			}
+		}
+
+		if (isFormOpen) {
+			document.addEventListener('mousedown', handleClickOutside);
+		} else {
+			document.removeEventListener('mousedown', handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [isFormOpen]);
 
 	return (
 		<>
 			<ArrowButton onClick={handleToggleForm} isFormOpen={isFormOpen} />
 			{isFormOpen && (
 				<aside
+					ref={formRef}
 					className={clsx(styles.container, {
 						[styles.container_open]: isFormOpen,
 					})}>
@@ -80,6 +99,9 @@ export const ArticleParamsForm = ({
 						className={styles.form}
 						onSubmit={handleFormSubmit}
 						onReset={handleFormReset}>
+						<Text weight={800} size={31} uppercase>
+							Задайте параметры
+						</Text>
 						<Select
 							title='шрифт'
 							selected={formState.fontFamilyOption}

@@ -22,7 +22,13 @@ export const ArrowButton = ({ onClick, isFormOpen }: TArrowButton) => {
 			className={clsx(styles.container, {
 				[styles.container_open]: isFormOpen,
 			})}>
-			<img src={arrow} alt='иконка стрелочки' className={styles.arrow} />
+			<img
+				src={arrow}
+				alt='иконка стрелочки'
+				className={clsx(styles.arrow, {
+					[styles.arrow_open]: isFormOpen,
+				})}
+			/>
 		</div>
 	);
 };

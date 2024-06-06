@@ -6,6 +6,12 @@ import { Text } from 'components/text';
 
 import styles from './Article.module.scss';
 
+// type ArticleProps = {
+// 	fontFamly: string;
+// 	fontSize: number;
+// 	backgroundColor: string;
+// };
+
 export const Article = () => {
 	return (
 		<article className={clsx(styles.article)}>
